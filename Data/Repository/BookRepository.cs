@@ -1,5 +1,6 @@
 ﻿using BookInventory.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -28,6 +29,12 @@ namespace BookInventory.Data.Repository
 
             await _db.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<IEnumerable<Book>> GetAllByPublishedYear(int? year)
+        {
+            if (year == null) return null;
+            return await _db.Book.Where(b => b.PublishedYear == year).Include(nameof(Book.Author)).ToListAsync();
         }
     }
 }

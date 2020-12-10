@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BookInventory.Models;
 using BookInventory.Data.Repository;
+using System.Collections.Generic;
+using System;
 
 namespace BookInventory.Controllers
 {
@@ -18,11 +20,32 @@ namespace BookInventory.Controllers
         }
 
         // GET: Books
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string author, string title, int? year)
         {
-            return View(await _unitOfWork.Book.GetAll(orderBy: x => x.OrderBy(b => b.Title), includeProperties: "Author"));
-        }
+            ViewData["AuthorFilter"] = author;
+            if (!string.IsNullOrEmpty(author))
+            {
+                return View(await _unitOfWork.Book.GetAll(filter: b => b.Author.Name.Contains(author),
+                    orderBy: x => x.OrderBy(b => b.Title), includeProperties: "Author"));
+            }
 
+            ViewData["TitleFilter"] = title;
+            if (!string.IsNullOrEmpty(title))
+            {
+                return View(await _unitOfWork.Book.GetAll(filter: b => b.Title.Contains(title),
+                    orderBy: x => x.OrderBy(b => b.Title), includeProperties: "Author"));
+            }
+
+            ViewData["YearFilter"] = year;
+            if (year != null)
+            {
+                return View(await _unitOfWork.Book.GetAllByPublishedYear(year));
+            }
+
+            return View(await _unitOfWork.Book.GetAll(orderBy: x => x.OrderBy(b => b.Title),
+                includeProperties: "Author"));
+        }
+        
         // GET: Books/Details/5
         public async Task<IActionResult> Details(int? id)
         {
