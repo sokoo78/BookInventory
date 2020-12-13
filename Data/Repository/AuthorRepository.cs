@@ -21,6 +21,7 @@ namespace BookInventory.Data.Repository
             dbObject.Name = author.Name;
             dbObject.BirthYear = author.BirthYear;
             dbObject.Nationality = author.Nationality;
+            dbObject.IsActive = author.IsActive;
 
             _db.SaveChanges();
             return true;

@@ -39,7 +39,7 @@ namespace BookInventory.Controllers
         // POST: Authors/Create        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,BirthYear,Nationality")] Author author)
+        public async Task<IActionResult> Create([Bind("Id,Name,BirthYear,Nationality,IsActive")] Author author)
         {
             if (ModelState.IsValid)
             {
@@ -61,7 +61,7 @@ namespace BookInventory.Controllers
         // POST: Authors/Edit/5       
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,BirthYear,Nationality")] Author author)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,BirthYear,Nationality,IsActive")] Author author)
         {
             if (id != author.Id) return NotFound();
 

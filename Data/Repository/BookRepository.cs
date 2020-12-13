@@ -24,6 +24,7 @@ namespace BookInventory.Data.Repository
             dbObject.ISBN = book.ISBN;
             dbObject.AgeLimit = book.AgeLimit;
             dbObject.AuthorId = book.AuthorId;
+            dbObject.IsActive = book.IsActive;
 
             await _db.SaveChangesAsync();
             return true;

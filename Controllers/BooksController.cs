@@ -7,8 +7,8 @@ using BookInventory.Services;
 
 namespace BookInventory.Controllers
 {
-    public class BooksController : Controller    {
-        
+    public class BooksController : Controller
+    {        
         private readonly IDataService _dataService;
 
         public BooksController(IDataService dataService)
@@ -59,7 +59,7 @@ namespace BookInventory.Controllers
         // POST: Books/Create        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,PublishedYear,PageNumber,ISBN,AgeLimit,AuthorId")] Book book)
+        public async Task<IActionResult> Create([Bind("Id,Title,PublishedYear,PageNumber,ISBN,AgeLimit,AuthorId,IsActive")] Book book)
         {
             if (ModelState.IsValid)
             {
@@ -84,7 +84,7 @@ namespace BookInventory.Controllers
         // POST: Books/Edit/5        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,PublishedYear,PageNumber,ISBN,AgeLimit,AuthorId")] Book book)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,PublishedYear,PageNumber,ISBN,AgeLimit,AuthorId,IsActive")] Book book)
         {
             if (id != book.Id) return NotFound();
 

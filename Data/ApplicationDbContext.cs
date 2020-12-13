@@ -19,7 +19,7 @@ namespace BookInventory.Data
                         .HasMany(a => a.Books)
                         .WithOne(b => b.Author)
                         .HasForeignKey(b => b.AuthorId)
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.SetNull);                        
         }
     }
 }
