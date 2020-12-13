@@ -4,7 +4,7 @@ using BookInventory.Models;
 
 namespace BookInventory.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {}
 
@@ -18,8 +18,7 @@ namespace BookInventory.Data
             modelBuilder.Entity<Author>()
                         .HasMany(a => a.Books)
                         .WithOne(b => b.Author)
-                        .HasForeignKey(b => b.AuthorId)
-                        .OnDelete(DeleteBehavior.SetNull);                        
+                        .HasForeignKey(b => b.AuthorId);                    
         }
     }
 }

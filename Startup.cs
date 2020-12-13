@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using BookInventory.Data;
 using BookInventory.Data.Repository;
 using BookInventory.Services;
+using BookInventory.Models;
 
 namespace BookInventory
 {
@@ -32,7 +33,7 @@ namespace BookInventory
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
