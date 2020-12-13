@@ -16,8 +16,15 @@ namespace BookInventory.Controllers
         }
 
         // GET: Authors
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string name)
         {
+
+            ViewData["NameFilter"] = name;
+            if (!string.IsNullOrEmpty(name))
+            {
+                return View(await _dataService.GetAuthorsFilteredByName(name));
+            }
+
             return View(await _dataService.GetAllAuthors());
         }
 

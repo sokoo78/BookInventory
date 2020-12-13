@@ -94,6 +94,12 @@ namespace BookInventory.Services
             return await _unitOfWork.Author.GetAll(orderBy: x => x.OrderBy(a => a.Name), includeProperties: "Books");
         }
 
+        public async Task<IEnumerable<Author>> GetAuthorsFilteredByName(string name)
+        {
+            return await _unitOfWork.Author.GetAll(filter: a => a.Name.Contains(name),
+                    orderBy: x => x.OrderBy(a => a.Name), includeProperties: "Books");
+        }
+
         public async Task<bool> AddAuthor(Author author)
         {
             _unitOfWork.Author.Add(author);

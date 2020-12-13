@@ -30,6 +30,7 @@ namespace BookInventory.Services
         public Task<Author> GetAuthor(int? id);
 
         public Task<IEnumerable<Author>> GetAllAuthors();
+        public Task<IEnumerable<Author>> GetAuthorsFilteredByName(string name);
 
         public Task<bool> AddAuthor(Author author);
         public Task<bool> UpdateAuthor(Author author);
