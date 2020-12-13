@@ -14,6 +14,7 @@ namespace BookInventory.Models
         public string Name { get; set; }
         public int BirthYear { get; set; }
         public string Nationality { get; set; }
+        public bool IsActive { get; set; }
 
         public ICollection<Book> Books { get; set; }
     }

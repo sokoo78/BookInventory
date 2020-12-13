@@ -8,6 +8,6 @@ namespace BookInventory.Data.Repository
         IBookRepository Book { get; }
         IAuthorRepository Author { get; }
 
-        Task Save();
+        Task<bool> Save();
     }
 }

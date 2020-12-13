@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using BookInventory.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BookInventory.Data
 {
@@ -21,7 +18,8 @@ namespace BookInventory.Data
             modelBuilder.Entity<Author>()
                         .HasMany(a => a.Books)
                         .WithOne(b => b.Author)
-                        .HasForeignKey(b => b.AuthorId);
+                        .HasForeignKey(b => b.AuthorId)
+                        .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

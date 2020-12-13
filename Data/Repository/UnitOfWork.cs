@@ -16,9 +16,10 @@ namespace BookInventory.Data.Repository
         public IBookRepository Book { get; private set; }
         public IAuthorRepository Author { get; private set; }
 
-        public async Task Save()
+        public async Task<bool> Save()
         {
-            await _db.SaveChangesAsync();
+            var result = await _db.SaveChangesAsync();
+            return result > 0;
         }
         
         public void Dispose()

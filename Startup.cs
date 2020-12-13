@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BookInventory.Data;
 using BookInventory.Data.Repository;
+using BookInventory.Services;
 
 namespace BookInventory
 {
@@ -35,6 +36,7 @@ namespace BookInventory
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IDataService, DataService>();
             services.AddControllersWithViews();
             services.AddRazorPages().AddRazorRuntimeCompilation();
         }
@@ -50,8 +52,6 @@ namespace BookInventory
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();

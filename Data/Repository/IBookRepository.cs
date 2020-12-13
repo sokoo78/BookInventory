@@ -1,13 +1,18 @@
 ﻿using BookInventory.Models;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BookInventory.Data.Repository
 {
     public interface IBookRepository : IRepository<Book>
     {
-        Task<bool> Update(Book book);
+        Task<bool> UpdateAndSave(Book book);
 
-        Task<IEnumerable<Book>> GetAllByPublishedYear(int? year);
+        Task<bool> ActivateAndSave(int? id);
+
+        Task<bool> Activate(Book book);
+
+        Task<bool> DeactivateAndSave(int? id);
+
+        Task<bool> Deactivate(Book book);
     }
 }

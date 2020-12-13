@@ -16,6 +16,7 @@ namespace BookInventory.Models
         public int PageNumber { get; set; }
         public string ISBN { get; set; }
         public int AgeLimit { get; set; }
+        public bool IsActive { get; set; }
 
         public int AuthorId { get; set; }
         public Author Author { get; set; }

@@ -1,5 +1,6 @@
 ﻿using BookInventory.Models;
-using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace BookInventory.Data.Repository
 {
@@ -12,9 +13,9 @@ namespace BookInventory.Data.Repository
             _db = db;
         }
 
-        public bool Update(Author author)
+        public async Task<bool> UpdateAndSave(Author author)
         {
-            var dbObject = _db.Author.FirstOrDefault(b => b.Id == author.Id);
+            var dbObject = await _db.Author.FirstOrDefaultAsync(b => b.Id == author.Id);
             if (dbObject == null) return false;
 
             dbObject.Name = author.Name;
@@ -23,6 +24,34 @@ namespace BookInventory.Data.Repository
 
             _db.SaveChanges();
             return true;
+        }
+
+        public async Task<bool> ActivateAndSave(int? id)
+        {
+            if (id == null) return false;
+            return await ActivateAndSave(_db.Author.Find(id));
+        }
+
+        public async Task<bool> ActivateAndSave(Author author)
+        {
+            if (author == null) return false;
+            author.IsActive = true;
+            var result = await _db.SaveChangesAsync();
+            return  result > 0;
+        }
+
+        public async Task<bool> DeactivateAndSave(int? id)
+        {
+            if (id == null) return false;
+            return await DeactivateAndSave(_db.Author.Find(id));
+        }
+
+        public async Task<bool> DeactivateAndSave(Author author)
+        {
+            if (author == null) return false;
+            author.IsActive = false;
+            var result = await _db.SaveChangesAsync();
+            return result > 0;
         }
     }
 }

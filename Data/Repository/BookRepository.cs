@@ -1,7 +1,5 @@
 ﻿using BookInventory.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace BookInventory.Data.Repository
@@ -15,7 +13,7 @@ namespace BookInventory.Data.Repository
             _db = db;
         }
 
-        public async Task<bool> Update(Book book)
+        public async Task<bool> UpdateAndSave(Book book)
         {
             var dbObject = await _db.Book.FirstOrDefaultAsync(b => b.Id == book.Id);
             if (dbObject == null) return false;
@@ -31,10 +29,32 @@ namespace BookInventory.Data.Repository
             return true;
         }
 
-        public async Task<IEnumerable<Book>> GetAllByPublishedYear(int? year)
+        public async Task<bool> ActivateAndSave(int? id)
         {
-            if (year == null) return null;
-            return await _db.Book.Where(b => b.PublishedYear == year).Include(nameof(Book.Author)).ToListAsync();
+            if (id == null) return false;
+            return await Activate(_db.Book.Find(id));
         }
+
+        public async Task<bool> Activate(Book book)
+        {
+            if (book == null) return false;
+            book.IsActive = true;
+            var result = await _db.SaveChangesAsync();
+            return result > 0;
+        }
+
+        public async Task<bool> DeactivateAndSave(int? id)
+        {
+            if (id == null) return false;
+            return await Deactivate(_db.Book.Find(id));
+        }
+
+        public async Task<bool> Deactivate(Book book)
+        {
+            if (book == null) return false;
+            book.IsActive = false;
+            var result = await _db.SaveChangesAsync();
+            return result > 0;
+        }       
     }
 }

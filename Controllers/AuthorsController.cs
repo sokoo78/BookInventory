@@ -2,30 +2,30 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BookInventory.Models;
-using BookInventory.Data.Repository;
+using BookInventory.Services;
 
 namespace BookInventory.Controllers
 {
     public class AuthorsController : Controller
     {
-        private readonly IUnitOfWork _unitOfWork;
-        
-        public AuthorsController(IUnitOfWork unitOfWork)
+        private readonly IDataService _dataService;
+
+        public AuthorsController(IDataService dataService)
         {
-            _unitOfWork = unitOfWork;
+            _dataService = dataService;
         }
 
         // GET: Authors
         public async Task<IActionResult> Index()
         {
-            return View(await _unitOfWork.Author.GetAll());
+            return View(await _dataService.GetAllAuthors());
         }
 
         // GET: Authors/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
-            var author = await _unitOfWork.Author.GetFirstOrDefault(filter: a => a.Id == id);
+            var author = await _dataService.GetAuthor(id);
             if (author == null) return NotFound();
             return View(author);
         }
@@ -43,8 +43,7 @@ namespace BookInventory.Controllers
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.Author.Add(author);
-                await _unitOfWork.Save();
+                await _dataService.AddAuthor(author);
                 return RedirectToAction(nameof(Index));
             }
             return View(author);
@@ -54,7 +53,7 @@ namespace BookInventory.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
-            var author = await _unitOfWork.Author.Get(id);
+            var author = await _dataService.GetAuthor(id);
             if (author == null) return NotFound();
             return View(author);
         }
@@ -70,12 +69,11 @@ namespace BookInventory.Controllers
             {
                 try
                 {
-                    _unitOfWork.Author.Update(author);
-                    await _unitOfWork.Save();
+                    await _dataService.UpdateAuthor(author);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await _unitOfWork.Author.Exists(author.Id)) return NotFound();
+                    if (!await _dataService.AuthorExists(author.Id)) return NotFound();
                     else throw;
                 }
                 return RedirectToAction(nameof(Index));
@@ -87,7 +85,7 @@ namespace BookInventory.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
-            var author = await _unitOfWork.Author.GetFirstOrDefault(a => a.Id == id);                
+            var author = await _dataService.GetAuthor(id);
             if (author == null) return NotFound();
             return View(author);
         }
@@ -97,9 +95,7 @@ namespace BookInventory.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var author = await _unitOfWork.Author.Get(id);
-            _unitOfWork.Author.Remove(author);
-            await _unitOfWork.Save();
+            await _dataService.DeactivateAuthor(id);
             return RedirectToAction(nameof(Index));
         }        
     }

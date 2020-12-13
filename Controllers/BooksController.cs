@@ -1,22 +1,19 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BookInventory.Models;
-using BookInventory.Data.Repository;
-using System.Collections.Generic;
-using System;
+using BookInventory.Services;
 
 namespace BookInventory.Controllers
 {
-    public class BooksController : Controller
-    {
-        private readonly IUnitOfWork _unitOfWork;
+    public class BooksController : Controller    {
+        
+        private readonly IDataService _dataService;
 
-        public BooksController(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
+        public BooksController(IDataService dataService)
+        {           
+            _dataService = dataService;
         }
 
         // GET: Books
@@ -25,32 +22,29 @@ namespace BookInventory.Controllers
             ViewData["AuthorFilter"] = author;
             if (!string.IsNullOrEmpty(author))
             {
-                return View(await _unitOfWork.Book.GetAll(filter: b => b.Author.Name.Contains(author),
-                    orderBy: x => x.OrderBy(b => b.Title), includeProperties: "Author"));
+                return View(await _dataService.GetAllBooksByAuthorName(author));
             }
 
             ViewData["TitleFilter"] = title;
             if (!string.IsNullOrEmpty(title))
             {
-                return View(await _unitOfWork.Book.GetAll(filter: b => b.Title.Contains(title),
-                    orderBy: x => x.OrderBy(b => b.Title), includeProperties: "Author"));
+                return View(await _dataService.GetAllBooksByTitle(title));
             }
 
             ViewData["YearFilter"] = year;
             if (year != null)
             {
-                return View(await _unitOfWork.Book.GetAllByPublishedYear(year));
+                return View(await _dataService.GetAllBooksByPublishedYear(year));
             }
 
-            return View(await _unitOfWork.Book.GetAll(orderBy: x => x.OrderBy(b => b.Title),
-                includeProperties: "Author"));
+            return View(await _dataService.GetAllBooks());
         }
         
         // GET: Books/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();           
-            var book = await _unitOfWork.Book.GetFirstOrDefault(filter: b => b.Id == id, includeProperties: "Author");            
+            var book = await _dataService.GetBook(id);
             if (book == null) return NotFound();
             return View(book);
         }
@@ -58,7 +52,7 @@ namespace BookInventory.Controllers
         // GET: Books/Create
         public async Task<IActionResult> Create()
         {            
-            ViewData["AuthorId"] = new SelectList(await _unitOfWork.Author.GetAll(), "Id", "Name");
+            ViewData["AuthorId"] = new SelectList(await _dataService.GetAllAuthors(), "Id", "Name");
             return View();
         }
 
@@ -68,13 +62,12 @@ namespace BookInventory.Controllers
         public async Task<IActionResult> Create([Bind("Id,Title,PublishedYear,PageNumber,ISBN,AgeLimit,AuthorId")] Book book)
         {
             if (ModelState.IsValid)
-            {                
-                _unitOfWork.Book.Add(book);
-                await _unitOfWork.Save();
+            {
+                await _dataService.AddBook(book);
                 return RedirectToAction(nameof(Index));
             }          
             
-            ViewData["AuthorId"] = new SelectList(await _unitOfWork.Author.GetAll(), "Id", "Name", book.AuthorId);
+            ViewData["AuthorId"] = new SelectList(await _dataService.GetAllAuthors(), "Id", "Name", book.AuthorId);
             return View(book);
         }
 
@@ -82,9 +75,9 @@ namespace BookInventory.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();            
-            var book = await _unitOfWork.Book.Get(id);
+            var book = await _dataService.GetBook(id);
             if (book == null) return NotFound();            
-            ViewData["AuthorId"] = new SelectList(await _unitOfWork.Author.GetAll(), "Id", "Name", book.AuthorId);
+            ViewData["AuthorId"] = new SelectList(await _dataService.GetAllAuthors(), "Id", "Name", book.AuthorId);
             return View(book);
         }
 
@@ -99,18 +92,17 @@ namespace BookInventory.Controllers
             {
                 try
                 {                    
-                    await _unitOfWork.Book.Update(book);
-                    await _unitOfWork.Save();
+                    await _dataService.UpdateBook(book);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await _unitOfWork.Book.Exists(id)) return NotFound();
+                    if (!await _dataService.BookExists(id)) return NotFound();
                     else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
             
-            ViewData["AuthorId"] = new SelectList(await _unitOfWork.Author.GetAll(), "Id", "Name", book.AuthorId);
+            ViewData["AuthorId"] = new SelectList(await _dataService.GetAllAuthors(), "Id", "Name", book.AuthorId);
             return View(book);
         }
 
@@ -118,7 +110,7 @@ namespace BookInventory.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();                      
-            var book = await _unitOfWork.Book.GetFirstOrDefault(filter: m => m.Id == id, includeProperties: "Author");
+            var book = await _dataService.GetBook(id);
             if (book == null) return NotFound();
             return View(book);
         }
@@ -128,9 +120,7 @@ namespace BookInventory.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {            
-            var book = await _unitOfWork.Book.Get(id);
-            _unitOfWork.Book.Remove(book);
-            await _unitOfWork.Save();
+            await _dataService.DeactivateBook(id);
             return RedirectToAction(nameof(Index));
         }
     }

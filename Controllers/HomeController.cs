@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using BookInventory.Models;
 
 namespace BookInventory.Controllers
@@ -21,7 +18,7 @@ namespace BookInventory.Controllers
 
         public IActionResult Index()
         {
-            User.Claims.Append(new Claim("name", "value"));
+            User.Claims.Append(new Claim("Role", "User"));
             return View();
         }
 
