@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BookInventory.Models;
 using BookInventory.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BookInventory.Controllers
 {
@@ -16,6 +17,7 @@ namespace BookInventory.Controllers
         }
 
         // GET: Authors
+        [Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> Index(string name)
         {
 
@@ -29,6 +31,7 @@ namespace BookInventory.Controllers
         }
 
         // GET: Authors/Details/5
+        [Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -38,12 +41,14 @@ namespace BookInventory.Controllers
         }
 
         // GET: Authors/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Authors/Create        
+        // POST: Authors/Create
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,BirthYear,Nationality,IsActive")] Author author)
@@ -57,6 +62,7 @@ namespace BookInventory.Controllers
         }
 
         // GET: Authors/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -65,7 +71,8 @@ namespace BookInventory.Controllers
             return View(author);
         }
 
-        // POST: Authors/Edit/5       
+        // POST: Authors/Edit/5
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,BirthYear,Nationality,IsActive")] Author author)
@@ -89,6 +96,7 @@ namespace BookInventory.Controllers
         }
 
         // GET: Authors/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -98,6 +106,7 @@ namespace BookInventory.Controllers
         }
 
         // POST: Authors/Delete/5
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

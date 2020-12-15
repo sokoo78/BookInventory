@@ -1,20 +1,20 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using BookInventory.Data;
 using BookInventory.Data.Repository;
 using BookInventory.Services;
 using BookInventory.Models;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using BookInventory.Authorization;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 
 namespace BookInventory
 {
@@ -33,8 +33,50 @@ namespace BookInventory
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddDefaultIdentity<ApplicationUser>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireDigit = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequiredUniqueChars = 0;
+            })
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            
+            //services.AddAuthentication(options => {
+            //options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;})                
+            //    .AddJwtBearer(options =>
+            //    {
+            //        options.RequireHttpsMetadata = false;
+            //        options.SaveToken = true;
+            //        options.TokenValidationParameters = new TokenValidationParameters
+            //    {
+            //        ValidateIssuer = true,
+            //        ValidateAudience = true,
+            //        ValidateLifetime = true,
+            //        ValidateIssuerSigningKey = true,
+            //        ValidIssuer = "https://localhost:5001/",
+            //        ValidAudience = "https://localhost:5001/",
+            //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Banana")),
+            //        ClockSkew = TimeSpan.Zero
+            //    };
+            //});
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(Policies.User, Policies.UserPolicy());
+                options.AddPolicy(Policies.Admin, Policies.AdminPolicy());
+                options.AddPolicy(Policies.UserAndAdmin, Policies.UserAndAdminPolicy());
+                //options.AddPolicy("UserAndAdmin", policy => policy.RequireRole("User").RequireRole("Admin"));
+                options.AddPolicy(Policies.Adult, Policies.AdultPolicy());
+            });
+
+            services.AddScoped<IAuthorizationHandler, AdultsOnlyHandler>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IDataService, DataService>();

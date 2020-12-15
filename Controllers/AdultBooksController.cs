@@ -8,18 +8,17 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace BookInventory.Controllers
 {
-    [Authorize]
-    public class BooksController : Controller
+    [Authorize(Policy = "Adult")]
+    public class AdultBooksController : Controller
     {        
         private readonly IDataService _dataService;
 
-        public BooksController(IDataService dataService)
+        public AdultBooksController(IDataService dataService)
         {           
             _dataService = dataService;
         }
 
         // GET: Books
-        [AllowAnonymous]
         public async Task<IActionResult> Index(string author, string title, int? year)
         {
             ViewData["AuthorFilter"] = author;
@@ -40,7 +39,7 @@ namespace BookInventory.Controllers
                 return View(await _dataService.GetAllBooksByPublishedYear(year));
             }
 
-            return View(await _dataService.GetAllBooks());
+            return View(await _dataService.GetAllAdultBooks());
         }
 
         // GET: Books/Details/5

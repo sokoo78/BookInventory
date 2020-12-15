@@ -13,6 +13,7 @@ namespace BookInventory.Services
         public Task<Book> GetBook(int? id);
 
         public Task<IEnumerable<Book>> GetAllBooks();
+        public Task<IEnumerable<Book>> GetAllAdultBooks();
         public Task<IEnumerable<Book>> GetAllBooksByAuthorName(string author);
         public Task<IEnumerable<Book>> GetAllBooksByTitle(string title);
         public Task<IEnumerable<Book>> GetAllBooksByPublishedYear(int? year);

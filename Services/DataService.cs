@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using BookInventory.Models;
 using BookInventory.Data.Repository;
 using System.Collections.Generic;
+using BookInventory.Authorization;
 
 namespace BookInventory.Services
 {
@@ -29,7 +30,12 @@ namespace BookInventory.Services
 
         public async Task<IEnumerable<Book>> GetAllBooks()
         {
-            return await _unitOfWork.Book.GetAll(orderBy: x => x.OrderBy(b => b.Title), includeProperties: "Author");
+            return await _unitOfWork.Book.GetAll(filter: b => b.IsActive == true, orderBy: x => x.OrderBy(b => b.Title), includeProperties: "Author");
+        }
+
+        public async Task<IEnumerable<Book>> GetAllAdultBooks()
+        {
+            return await _unitOfWork.Book.GetAll(filter: b => b.AgeLimit > Policies.AgeLimit && b.IsActive == true, orderBy: x => x.OrderBy(b => b.Title), includeProperties: "Author");
         }
 
         public async Task<IEnumerable<Book>> GetAllBooksByAuthorName(string author)

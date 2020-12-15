@@ -1,0 +1,95 @@
+﻿@model IEnumerable<BookInventory.Models.Book>
+
+@{
+    ViewData["Title"] = "AdultBooks";
+}
+
+<h1>Adult Books</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Filter by author: <input type="text" name="Author" value="@ViewData["AuthorFilter"]" />
+            <input type="submit" value="Search" class="btn btn-default" /> |
+            Filter by title: <input type="text" name="Title" value="@ViewData["TitleFilter"]" />
+            <input type="submit" value="Search" class="btn btn-default" /> |
+            Filter by year: <input type="text" name="Year" value="@ViewData["YearFilter"]" />
+            <input type="submit" value="Search" class="btn btn-default" /> |
+            <a asp-action="Index">Back to Full List</a>
+        </p>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        @if (Model.Count() > 0)
+        {
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PublishedYear)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PageNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ISBN)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AgeLimit)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Author)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsActive)
+            </th>
+            <th></th>
+        </tr>
+        }
+        else
+        {
+            <tr>
+                <th>There are no books in the database yet.</th>
+            </tr>
+        }
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PublishedYear)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PageNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ISBN)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AgeLimit)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Author.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsActive)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
