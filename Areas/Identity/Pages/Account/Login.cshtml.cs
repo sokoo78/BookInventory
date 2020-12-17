@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
 
 namespace BookInventory.Areas.Identity.Pages.Account
 {
@@ -83,6 +84,12 @@ namespace BookInventory.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
+                    // Pass JWT token
+                    var user = await _userManager.FindByEmailAsync(Input.Email);
+                    var claims = await _userManager.GetClaimsAsync(user);
+                    var token = Authentication.TokenGenerator.GenerateJWTToken(user, claims);
+                    HttpContext.Response.Headers.Add("Authorization", $"Bearer {token}");
+
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }

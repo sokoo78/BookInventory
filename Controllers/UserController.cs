@@ -27,11 +27,11 @@ namespace BookInventory.Controllers
         public IActionResult Index()
         {
             var userList = _db.ApplicationUser.ToList();
-            var userRole = _db.UserRoles.ToList();
+            var userRoleList = _db.UserRoles.ToList();
             var roles = _db.Roles.ToList();
             foreach (var user in userList)
             {
-                var role = userRole.FirstOrDefault(u => u.UserId == user.Id);
+                var role = userRoleList.FirstOrDefault(u => u.UserId == user.Id);
                 if (role == null || roles.Count() < 1) user.Role = "None";
                 else user.Role = roles.FirstOrDefault(r => r.Id == role.RoleId).Name;
             }

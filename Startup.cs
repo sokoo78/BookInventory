@@ -42,37 +42,39 @@ namespace BookInventory
                 options.Password.RequireDigit = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequiredUniqueChars = 0;
+                options.ClaimsIdentity.UserIdClaimType = "UserID";
             })
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            
-            //services.AddAuthentication(options => {
-            //options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            //options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;})                
-            //    .AddJwtBearer(options =>
-            //    {
-            //        options.RequireHttpsMetadata = false;
-            //        options.SaveToken = true;
-            //        options.TokenValidationParameters = new TokenValidationParameters
-            //    {
-            //        ValidateIssuer = true,
-            //        ValidateAudience = true,
-            //        ValidateLifetime = true,
-            //        ValidateIssuerSigningKey = true,
-            //        ValidIssuer = "https://localhost:5001/",
-            //        ValidAudience = "https://localhost:5001/",
-            //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Banana")),
-            //        ClockSkew = TimeSpan.Zero
-            //    };
-            //});
+            services.AddAuthentication(options =>
+            {
+                //options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                //options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddCookie(cfg => cfg.SlidingExpiration = true)
+                .AddJwtBearer(options =>
+                {
+                    options.RequireHttpsMetadata = false;
+                    options.SaveToken = true;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = SD.Issuer,
+                        ValidAudience = SD.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SD.SecretKey)),
+                        ClockSkew = TimeSpan.Zero
+                    };
+                });
 
             services.AddAuthorization(options =>
             {
                 options.AddPolicy(Policies.User, Policies.UserPolicy());
                 options.AddPolicy(Policies.Admin, Policies.AdminPolicy());
                 options.AddPolicy(Policies.UserAndAdmin, Policies.UserAndAdminPolicy());
-                //options.AddPolicy("UserAndAdmin", policy => policy.RequireRole("User").RequireRole("Admin"));
                 options.AddPolicy(Policies.Adult, Policies.AdultPolicy());
             });
 

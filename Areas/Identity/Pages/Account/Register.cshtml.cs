@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using System.Security.Claims;
+using BookInventory.Authorization;
 
 namespace BookInventory.Areas.Identity.Pages.Account
 {
@@ -76,7 +78,7 @@ namespace BookInventory.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {            
-            returnUrl = returnUrl ?? Url.Content("~/");
+            returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
@@ -85,6 +87,23 @@ namespace BookInventory.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+
+                    // Add default claims to user
+                    int calculatedAge = DateTime.Today.Year - user.DateOfBirth.Year;
+                    bool isAdult = false;
+                    if (user.DateOfBirth > DateTime.Today.AddYears(-calculatedAge)) calculatedAge--;
+                    if (calculatedAge > Policies.AgeLimit) isAdult = true;                    
+
+                    var claims = new List<Claim>
+                    {
+                        new Claim("DateOfBirth", user.DateOfBirth.ToString()),
+                        new Claim("Adult", isAdult.ToString())
+                    };
+                    result = await _userManager.AddClaimsAsync(user, claims);
+                    if (result.Succeeded)
+                    {
+                        _logger.LogInformation("Default user claims assigned.");
+                    }
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
