@@ -49,11 +49,12 @@ namespace BookInventory
 
             services.AddAuthentication(options =>
             {
-                //options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                //options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                //options.DefaultAuthenticateScheme = "ClientCookie";
+                //options.DefaultSignInScheme = "ClientCookie";
+                //options.DefaultChallengeScheme = "Server";
             })
-                .AddCookie(cfg => cfg.SlidingExpiration = true)
-                .AddJwtBearer(options =>
+                .AddCookie("ClientCookie", options => options.SlidingExpiration = true)
+                .AddJwtBearer("Server", options =>
                 {
                     options.RequireHttpsMetadata = false;
                     options.SaveToken = true;
@@ -82,8 +83,8 @@ namespace BookInventory
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IDataService, DataService>();
-            services.AddControllersWithViews();
-            services.AddRazorPages().AddRazorRuntimeCompilation();
+            services.AddScoped<IShopService, ShopService>();
+            services.AddControllersWithViews().AddRazorRuntimeCompilation();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

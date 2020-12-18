@@ -12,6 +12,8 @@
     <Compile Remove="Data\Migrations\20201213192907_AddApplicationUserModel.Designer.cs" />
     <Compile Remove="Data\Migrations\20201214173142_AddApplicationUserToDbContext.cs" />
     <Compile Remove="Data\Migrations\20201214173142_AddApplicationUserToDbContext.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201217220647_UpdateShopModel.cs" />
+    <Compile Remove="Data\Migrations\20201217220647_UpdateShopModel.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

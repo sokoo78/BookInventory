@@ -10,6 +10,8 @@ namespace BookInventory.Data
 
         public DbSet<Book> Book { get; set; }
         public DbSet<Author> Author { get; set; }
+        public DbSet<Shop> Shop { get; set; }
+        public DbSet<ShopBook> ShopBook { get; set; }
         public DbSet<ApplicationUser> ApplicationUser { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -19,7 +21,10 @@ namespace BookInventory.Data
             modelBuilder.Entity<Author>()
                         .HasMany(a => a.Books)
                         .WithOne(b => b.Author)
-                        .HasForeignKey(b => b.AuthorId);                    
-        }
+                        .HasForeignKey(b => b.AuthorId);
+
+            modelBuilder.Entity<ShopBook>()
+                .HasKey(s => new { s.ShopId, s.BookId });
+        }        
     }
 }

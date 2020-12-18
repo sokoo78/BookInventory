@@ -20,5 +20,7 @@ namespace BookInventory.Models
 
         public int AuthorId { get; set; }
         public Author Author { get; set; }
+
+        public ICollection<ShopBook> ShopBook { get; set; }
     }
 }

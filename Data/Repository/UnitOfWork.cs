@@ -11,11 +11,15 @@ namespace BookInventory.Data.Repository
             _db = db;
             Book = new BookRepository(_db);
             Author = new AuthorRepository(_db);
+            Shop = new ShopRepository(_db);
+            ShopBook = new ShopBookRepository(_db);
         }
 
         public IBookRepository Book { get; private set; }
         public IAuthorRepository Author { get; private set; }
-      
+        public IShopRepository Shop { get; private set; }
+        public IShopBookRepository ShopBook { get; private set; }
+
         public async Task<bool> Save()
         {
             var result = await _db.SaveChangesAsync();
