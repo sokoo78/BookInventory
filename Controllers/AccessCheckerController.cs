@@ -41,6 +41,7 @@ namespace BookInventory.Controllers
             return View();
         }
 
+        [Authorize(Policy = "Adult")]
         public IActionResult AuthorizedWithAdultClaimOnly()
         {
             return View();

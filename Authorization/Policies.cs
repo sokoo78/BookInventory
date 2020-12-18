@@ -32,7 +32,7 @@ namespace BookInventory.Authorization
 
         public static AuthorizationPolicy AdultPolicy()
         {
-            return new AuthorizationPolicyBuilder().RequireAuthenticatedUser().RequireRole(User).RequireClaim("Adult").Build();
+            return new AuthorizationPolicyBuilder().RequireAuthenticatedUser().RequireClaim("Adult").Build();
         }
     }
 }
